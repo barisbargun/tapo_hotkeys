@@ -23,6 +23,11 @@ Hotkey("#^Down", QueueAction.Bind("DOWN"))
 
 QueueAction(action, *) {
     global queue
-    filename := queue "\" A_NowUTC "_" A_TickCount "_" Random(100000, 999999) ".cmd"
-    FileAppend(String(action), filename, "UTF-8-RAW")
+    static sequence := 0
+    static nonce := Random(100000, 999999)
+    Critical("On")
+    sequence += 1
+    filename := queue "\" Format("{1}_{2:010d}_{3:010d}_{4}", A_NowUTC, A_TickCount, sequence, nonce)
+    FileAppend(String(action), filename ".tmp", "UTF-8-RAW")
+    FileMove(filename ".tmp", filename ".cmd")
 }
